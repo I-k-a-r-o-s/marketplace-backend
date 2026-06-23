@@ -4,6 +4,7 @@ dotenv.config();
 import dns from "node:dns/promises";
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
 import express from "express";
+import connectMongoDB from "./configs/mongoDB.js";
 
 const server = express();
 
@@ -11,11 +12,14 @@ const port = process.env.PORT;
 
 const startServer = async () => {
   try {
+    await connectMongoDB();
     server.listen(port, () => {
-      console.log(`Server is Running on PORT: ${PORT}`);
+      console.log(`Server is Running on PORT: ${port}`);
     });
   } catch (error) {
     console.log("Error in startServer!:", error);
     process.exit(1);
   }
 };
+
+startServer();
