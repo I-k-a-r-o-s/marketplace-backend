@@ -4,12 +4,23 @@ dotenv.config();
 import dns from "node:dns/promises";
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
 import express from "express";
+import cors from "cors";
 import connectMongoDB from "./configs/mongoDB.js";
+import authRouter from "./routes/authRoutes.js";
 
 const server = express();
 
-const port = process.env.PORT;
+server.use(express.json());
+server.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+  }),
+);
 
+server.use("/api/auth", authRouter);
+
+const port = process.env.PORT;
 const startServer = async () => {
   try {
     await connectMongoDB();
