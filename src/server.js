@@ -5,6 +5,7 @@ import dns from "node:dns/promises";
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import connectMongoDB from "./configs/mongoDB.js";
 import authRouter from "./routes/authRoutes.js";
 
@@ -17,6 +18,7 @@ server.use(
     credentials: true,
   }),
 );
+server.use(cookieParser());
 
 server.use("/api/auth", authRouter);
 
