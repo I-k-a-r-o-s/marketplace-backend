@@ -49,11 +49,16 @@ export const signUp = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    await UserModel.create({
+
+    const newUser = await UserModel.create({
       userName,
       email,
       password: hashedPassword,
     });
+
+    // Auto login after signup
+    generateToken(res, { id: newUser._id });
+
     return res.status(201).json({
       success: true,
       message: "User Registered successfully!",
@@ -101,6 +106,7 @@ export const signIn = async (req, res) => {
     }
 
     generateToken(res, { id: isValidUser._id });
+
     const { password: notSent, ...userData } = isValidUser.toObject(); //remove password from the response object
     return res.status(200).json({
       success: true,
