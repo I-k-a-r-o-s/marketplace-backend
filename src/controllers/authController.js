@@ -59,9 +59,11 @@ export const signUp = async (req, res) => {
     // Auto login after signup
     generateToken(res, { id: newUser._id });
 
+    const { password: notSent, ...userData } = newUser.toObject(); //remove password from the response object
     return res.status(201).json({
       success: true,
       message: "User Registered successfully!",
+      userData,
     });
   } catch (error) {
     errorResponse(res, "signup", error);
