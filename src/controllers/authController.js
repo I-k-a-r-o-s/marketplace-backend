@@ -119,3 +119,23 @@ export const signIn = async (req, res) => {
     errorResponse(res, "signin", error);
   }
 };
+
+export const getAuthorizedUser = async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.user.id).select("-password");
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found!",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "User fetched successfully!",
+      userData: user,
+    });
+  } catch (error) {
+    errorResponse(res, "getAuthorizedUser", error);
+  }
+};
