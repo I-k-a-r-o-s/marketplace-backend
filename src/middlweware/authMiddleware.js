@@ -1,9 +1,5 @@
 import jwt from "jsonwebtoken";
 
-const verifyToken = (token) => {
-  return jwt.verify(token, process.env.JWT_SECRET);
-};
-
 export const protectedRoute = (req, res, next) => {
   const token = req.cookies["auth-token"];
 
@@ -15,8 +11,7 @@ export const protectedRoute = (req, res, next) => {
   }
 
   try {
-    const decoded = verifyToken(token);
-    req.user = decoded;
+    req.user = jwt.verify(token, process.env.JWT_SECRET);
     return next();
   } catch (error) {
     console.log("Error in protectedRoute!:", error);
