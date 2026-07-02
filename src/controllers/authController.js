@@ -2,25 +2,7 @@ import { errorResponse } from "../helpers/responses.js";
 import UserModel from "../models/userModel.js";
 import validator from "validator";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-
-const oneHour = 60 * 60 * 1000;
-
-const cookiesOptions = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "strict",
-  maxAge: oneHour,
-};
-
-const setCookie = (res, token) => {
-  res.cookie("auth-token", token, cookiesOptions);
-};
-
-const generateToken = (res, payload) => {
-  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
-  setCookie(res, token);
-};
+import { generateToken } from "../utils/authTokenCookies.js";
 
 export const signUp = async (req, res) => {
   try {
@@ -51,7 +33,7 @@ export const signUp = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await UserModel.create({
-      userName:userName.trim(),
+      userName: userName.trim(),
       email,
       password: hashedPassword,
     });
