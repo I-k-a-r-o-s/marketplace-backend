@@ -2,6 +2,7 @@ import { errorResponse } from "../helpers/responses.js";
 import bcrypt from "bcryptjs";
 import validator from "validator";
 import UserModel from "../models/userModel.js";
+import { cookiesOptions } from "../utils/authTokenCookies.js";
 
 export const updateUserInfo = async (req, res) => {
   try {
@@ -83,5 +84,25 @@ export const updateUserInfo = async (req, res) => {
     });
   } catch (error) {
     errorResponse(res, "updateUserInfo", error);
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  try {
+    const user = await UserModel.findByIdAndDelete(req.user.id);
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User doesn't exist!",
+      });
+    }
+
+    res.clearCookie("auth-token", cookiesOptions);
+    return res.status(200).json({
+      success: true,
+      message: "User deleted successfully!",
+    });
+  } catch (error) {
+    errorResponse(res, "deleteUser", error);
   }
 };
