@@ -2,7 +2,7 @@ import { errorResponse } from "../helpers/responses.js";
 import UserModel from "../models/userModel.js";
 import validator from "validator";
 import bcrypt from "bcryptjs";
-import { generateToken } from "../utils/authTokenCookies.js";
+import { cookiesOptions, generateToken } from "../utils/authTokenCookies.js";
 
 export const signUp = async (req, res) => {
   try {
@@ -99,6 +99,18 @@ export const signIn = async (req, res) => {
     });
   } catch (error) {
     errorResponse(res, "signin", error);
+  }
+};
+
+export const signOut = async (req, res) => {
+  try {
+    res.clearCookie("auth-token", cookiesOptions);
+    return res.status(200).json({
+      success: true,
+      message: "Signed out successfully!",
+    });
+  } catch (error) {
+    errorResponse(res, "signOut", error);
   }
 };
 
