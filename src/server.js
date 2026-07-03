@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 import connectMongoDB from "./configs/mongoDB.js";
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
+import listingRouter from "./routes/listingRouter.js";
 
 const server = express();
 
@@ -23,6 +24,7 @@ server.use(cookieParser());
 
 server.use("/api/auth", authRouter);
 server.use("/api/user", userRouter);
+server.use("/api/listing", listingRouter);
 
 const port = process.env.PORT;
 const startServer = async () => {
