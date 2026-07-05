@@ -10,6 +10,7 @@ import connectMongoDB from "./configs/mongoDB.js";
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import listingRouter from "./routes/listingRouter.js";
+import connectCloudinary from "./configs/cloudinary.js";
 
 const server = express();
 
@@ -29,6 +30,7 @@ server.use("/api/listing", listingRouter);
 const port = process.env.PORT;
 const startServer = async () => {
   try {
+    connectCloudinary();
     await connectMongoDB();
     server.listen(port, () => {
       console.log(`Server is Running on PORT: ${port}`);
