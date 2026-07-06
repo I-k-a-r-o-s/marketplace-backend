@@ -93,6 +93,7 @@ export const createListing = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "Listing created successfully",
+      listing
     });
   } catch (error) {
     errorResponse(res, "createListing", error);
