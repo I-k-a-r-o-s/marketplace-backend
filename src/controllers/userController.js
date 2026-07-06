@@ -96,9 +96,13 @@ export const deleteUser = async (req, res) => {
 
 export const getUserListings = async (req, res) => {
   try {
-    const listings = await ListingModel.find({ userRef: req.user.id }).sort({
-      createdAt: -1,
-    });
+    const listings = await ListingModel.find({ userRef: req.user.id })
+      .select(
+        "name address typeOfPlace price discountedPrice offer bedrooms bathrooms images createdAt",
+      )
+      .sort({
+        createdAt: -1,
+      });
     if (!listings) {
       return res.status(404).json({
         success: false,
