@@ -15,6 +15,8 @@ const setCookie = (res, token) => {
 };
 
 export const generateToken = (res, payload) => {
-  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
+  const token = jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: process.env.COOKIE_EXPIRY,
+  });
   setCookie(res, token);
 };
