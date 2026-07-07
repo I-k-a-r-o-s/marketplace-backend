@@ -14,6 +14,7 @@ const listingSchema = new mongoose.Schema(
     typeOfPlace: { type: String, enum: ["rent", "sell"], required: true },
     offer: { type: Boolean, required: true, default: false },
     images: { type: [String], required: true },
+    cloudinaryImagePublicIds: { type: [String], required: true, default: [] },
     userRef: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "UserModel",
