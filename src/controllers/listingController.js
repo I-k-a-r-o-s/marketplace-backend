@@ -22,14 +22,27 @@ export const createListing = async (req, res) => {
       offer,
     } = data;
 
+    const numericPrice = Number(price);
+    const numericDiscountedPrice = Number(discountedPrice);
+    const numericBathrooms = Number(bathrooms);
+    const numericBedrooms = Number(bedrooms);
+
     if (
       !name ||
       !description ||
       !address ||
       !typeOfPlace ||
       price == null ||
+      price === "" ||
+      Number.isNaN(numericPrice) ||
+      (offer &&
+        (discountedPrice == null || Number.isNaN(numericDiscountedPrice))) ||
       bathrooms == null ||
+      bathrooms === "" ||
       bedrooms == null ||
+      bedrooms === "" ||
+      Number.isNaN(numericBathrooms) ||
+      Number.isNaN(numericBedrooms) ||
       furnished == null ||
       parking == null ||
       offer == null
@@ -40,11 +53,11 @@ export const createListing = async (req, res) => {
       });
     }
 
-    const finalDiscountedPrice = offer ? discountedPrice : undefined;
+    const finalDiscountedPrice = offer ? numericDiscountedPrice : undefined;
 
     if (
       offer &&
-      (finalDiscountedPrice == null || finalDiscountedPrice >= price)
+      (finalDiscountedPrice == null || finalDiscountedPrice >= numericPrice)
     ) {
       return res.status(400).json({
         success: false,
@@ -76,16 +89,18 @@ export const createListing = async (req, res) => {
     );
 
     const imageURLs = uploadResults.map((result) => result.secure_url);
-    const cloudinaryImagePublicIds = uploadResults.map((result) => result.public_id);
+    const cloudinaryImagePublicIds = uploadResults.map(
+      (result) => result.public_id,
+    );
 
     const listing = await ListingModel.create({
       name,
       description,
       address,
-      price,
+      price: numericPrice,
       discountedPrice: finalDiscountedPrice,
-      bathrooms,
-      bedrooms,
+      bathrooms: numericBathrooms,
+      bedrooms: numericBedrooms,
       furnished,
       parking,
       typeOfPlace,
