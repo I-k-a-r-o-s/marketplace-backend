@@ -93,9 +93,33 @@ export const createListing = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "Listing created successfully",
-      listing
+      listing,
     });
   } catch (error) {
     errorResponse(res, "createListing", error);
+  }
+};
+
+export const deleteListing = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedListing = await ListingModel.findOneAndDelete({
+      _id: id,
+      userRef: req.user.id,
+    });
+    if (!deletedListing) {
+      return res.status(404).json({
+        success: false,
+        message: "Listing doesn't exist or unauthorized!",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Listing Deleted Successfully!",
+    });
+  } catch (error) {
+    errorResponse(res, "deleteListing", error);
   }
 };
