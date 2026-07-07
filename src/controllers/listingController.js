@@ -66,14 +66,17 @@ export const createListing = async (req, res) => {
       });
     }
 
-    const imageURLs = await Promise.all(
+    const uploadResults = await Promise.all(
       imageFiles.map(async (file) => {
         const uploadResult = await cloudinary.uploader.upload(file.path, {
           folder: "marketplace",
         });
-        return uploadResult.secure_url;
+        return uploadResult;
       }),
     );
+
+    const imageURLs = uploadResults.map((result) => result.secure_url);
+    const cloudinaryImagePublicIds = uploadResults.map((result) => result.public_id);
 
     const listing = await ListingModel.create({
       name,
@@ -88,6 +91,7 @@ export const createListing = async (req, res) => {
       typeOfPlace,
       offer,
       images: imageURLs,
+      cloudinaryImagePublicIds,
       userRef: id,
     });
     res.status(201).json({
@@ -113,6 +117,15 @@ export const deleteListing = async (req, res) => {
         success: false,
         message: "Listing doesn't exist or unauthorized!",
       });
+    }
+
+    const publicIds = deletedListing.cloudinaryImagePublicIds || [];
+    if (publicIds.length > 0) {
+      await Promise.all(
+        publicIds.map(async (publicId) => {
+          await cloudinary.uploader.destroy(publicId);
+        }),
+      );
     }
 
     return res.status(200).json({
