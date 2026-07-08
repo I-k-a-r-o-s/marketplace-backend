@@ -98,7 +98,7 @@ export const getUserListings = async (req, res) => {
   try {
     const listings = await ListingModel.find({ userRef: req.user.id })
       .select(
-        "name address typeOfPlace price discountedPrice offer bedrooms bathrooms images createdAt",
+        "name address description typeOfPlace price discountedPrice offer bedrooms bathrooms images cloudinaryImagePublicIds createdAt",
       )
       .sort({
         createdAt: -1,
