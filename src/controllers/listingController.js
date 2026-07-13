@@ -410,3 +410,61 @@ export const getListing = async (req, res) => {
     errorResponse(res, "getListing", error);
   }
 };
+
+export const findListings = async (req, res) => {
+  try {
+    const limit = Number(req.query.limit) || 9;
+    const startIndex = Number(req.query.startIndex) || 0;
+
+    const searchTerm = req.query.searchTerm || "";
+    const sort = req.query.sort || "createdAt";
+    const order = req.query.order || "desc";
+
+    const { offer, furnished, parking, typeOfPlace } = req.query;
+
+    const query = {
+      name: {
+        $regex: searchTerm, //mongodb built in search
+        $options: "i", //means case insensitive for mongodb
+      },
+    };
+
+    if (offer !== undefined) {
+      query.offer = offer === "true";
+    }
+
+    if (furnished !== undefined) {
+      query.furnished = furnished === "true";
+    }
+
+    if (parking !== undefined) {
+      query.parking = parking === "true";
+    }
+
+    if (typeOfPlace && typeOfPlace !== "all") {
+      query.typeOfPlace = typeOfPlace;
+    }
+
+    const allowedSortFields = ["createdAt", "price", "updatedAt"];
+
+    const sortField = allowedSortFields.includes(sort) ? sort : "createdAt";
+
+    const sortOrder = order === "asc" ? 1 : -1;
+
+    const foundListings = await ListingModel.find(query)
+      .sort({
+        [sortField]: sortOrder,
+      })
+      .select("-cloudinaryImagePublicIds")
+      .limit(limit)//maximum amount of results
+      .skip(startIndex);//skip the first (this many):-for show more functionality
+
+    return res.status(200).json({
+      success: true,
+      message: "Search complete",
+      foundListings,
+    });
+  } catch (error) {
+    errorResponse(res, "findListings", error);
+  }
+};
