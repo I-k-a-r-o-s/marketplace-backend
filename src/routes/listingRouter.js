@@ -4,6 +4,7 @@ import upload from "../middlweware/multer.js";
 import {
   createListing,
   deleteListing,
+  findListings,
   getListing,
   updateListing,
 } from "../controllers/listingController.js";
@@ -24,5 +25,6 @@ listingRouter.patch(
   updateListing,
 );
 listingRouter.get("/:id", getListing);
+listingRouter.get("/", findListings);
 
 export default listingRouter;
