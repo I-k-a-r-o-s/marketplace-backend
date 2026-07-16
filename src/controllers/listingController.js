@@ -456,13 +456,16 @@ export const findListings = async (req, res) => {
         [sortField]: sortOrder,
       })
       .select("-cloudinaryImagePublicIds")
-      .limit(limit)//maximum amount of results
-      .skip(startIndex);//skip the first (this many):-for show more functionality
+      .limit(limit) //maximum amount of results
+      .skip(startIndex); //skip the first (this many):-for show more functionality
+
+    const totalListings = await ListingModel.countDocuments(query);
 
     return res.status(200).json({
       success: true,
       message: "Search complete",
       foundListings,
+      hasMore: startIndex + limit < totalListings,
     });
   } catch (error) {
     errorResponse(res, "findListings", error);
