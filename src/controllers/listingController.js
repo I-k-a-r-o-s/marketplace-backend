@@ -465,7 +465,7 @@ export const findListings = async (req, res) => {
       success: true,
       message: "Search complete",
       foundListings,
-      hasMore: startIndex + limit < totalListings,
+      hasMore: startIndex + limit < totalListings, //caheck if more results are available other than the ones that are already sent
     });
   } catch (error) {
     errorResponse(res, "findListings", error);
